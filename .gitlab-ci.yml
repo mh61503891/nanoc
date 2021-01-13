@@ -3,41 +3,40 @@
     untracked: true
     key: "bundler"
     paths:
-      - vendor/bundle
+      - $PWD/vendor/bundle
 
-.test-script: &test-script
-  - bundle config set --local path $PWD/vendor/bundle
-  - bundle install --jobs "$(nproc)"
-  - bundle exec rake nanoc_core:test
-  # - bundle exec rake nanoc:test
-  # - bundle exec rake nanoc_cli:test
-  # - bundle exec rake nanoc_checking:test
-  # - bundle exec rake nanoc_deploying:test
-  # - bundle exec rake nanoc_external:test
-  # - bundle exec rake nanoc_live:test
-  # - bundle exec rake nanoc_spec:test
-  # - bundle exec rake guard_nanoc:test
+.test: &test
+  timeout: 15m
+  script:
+    - bundle config set --local path $PWD/vendor/bundle
+    - bundle install --jobs "$(nproc)"
+    - apt install -y rsync
+    - bundle exec rake nanoc_core:test
+    # - bundle exec rake nanoc:test
+    # - bundle exec rake nanoc_cli:test
+    # - bundle exec rake nanoc_checking:test
+    # - bundle exec rake nanoc_deploying:test
+    # - bundle exec rake nanoc_external:test
+    # - bundle exec rake nanoc_live:test
+    # - bundle exec rake nanoc_spec:test
+    # - bundle exec rake guard_nanoc:test
 
 test_ruby25:
   image: ruby:2.5
   <<: *bundler_cache
-  script:
-    - *test-script
+  <<: *test
 
 test_ruby26:
   image: ruby:2.6
   <<: *bundler_cache
-  script:
-    - *test-script
+  <<: *test
 
 test_ruby27:
   image: ruby:2.7
   <<: *bundler_cache
-  script:
-    - *test-script
+  <<: *test
 
 test_ruby30:
   image: ruby:3.0
   <<: *bundler_cache
-  script:
-    - *test-script
+  <<: *test
